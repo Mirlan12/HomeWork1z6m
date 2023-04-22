@@ -8,6 +8,7 @@ import android.os.PersistableBundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.savedstate.SavedStateRegistryOwner
 
 class MainActivity : AppCompatActivity() {
     private lateinit var editText: EditText
@@ -31,13 +32,17 @@ class MainActivity : AppCompatActivity() {
             } else {
                 val intent = Intent(this, SecondScreen::class.java)
                 intent.putExtra("inputText", inputText)
-                startActivityForResult(intent, REQUEST_CODE)
+                registerForResultLauncher(intent, REQUEST_CODE)
             }
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    private fun registerForResultLauncher(intent: Intent, requestCode: Int) {
+
+    }
+
+    fun registerForResultLauncher (requestCode: Int, resultCode: Int, data: Intent?) {
+        registerForActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val outputText = data?.getStringExtra("outputText")
             outputText?.let {
@@ -45,6 +50,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+}
+
+private fun SavedStateRegistryOwner.registerForActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
 }
 
 
