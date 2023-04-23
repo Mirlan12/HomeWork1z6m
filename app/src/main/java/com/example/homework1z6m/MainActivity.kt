@@ -1,21 +1,22 @@
-package com.example.homework1z6m
-
-import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.savedstate.SavedStateRegistryOwner
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.appcompat.app.AppCompatActivity
+import com.example.homework1z6m.R
+import com.example.homework1z6m.SecondScreen
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var editText: EditText
-    private lateinit var button: Button
 
-    companion object {
-        private const val REQUEST_CODE = 1
+    private lateinit var editText: EditText
+    private val startForResult = registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val outputText = result.data?.getStringExtra("outputText")
+            editText.setText(outputText)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,38 +24,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         editText = findViewById(R.id.edit_text)
-        button = findViewById(R.id.button)
-
-        button.setOnClickListener {
+        val button1 = findViewById<Button>(R.id.button)
+        button1.setOnClickListener {
             val inputText = editText.text.toString().trim()
             if (inputText.isEmpty()) {
-                Toast.makeText(this, "Edit Text не должен быть пустым", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "EditText не может быть пустым", Toast.LENGTH_SHORT).show()
             } else {
                 val intent = Intent(this, SecondScreen::class.java)
                 intent.putExtra("inputText", inputText)
-                registerForResultLauncher(intent, REQUEST_CODE)
-            }
-        }
-    }
-
-    private fun registerForResultLauncher(intent: Intent, requestCode: Int) {
-
-    }
-
-    fun registerForResultLauncher (requestCode: Int, resultCode: Int, data: Intent?) {
-        registerForActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val outputText = data?.getStringExtra("outputText")
-            outputText?.let {
-                editText.setText(it)
+                startForResult.launch(intent)
             }
         }
     }
 }
 
-private fun SavedStateRegistryOwner.registerForActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-}
 
 
 
